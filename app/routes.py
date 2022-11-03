@@ -1,21 +1,41 @@
+import re
 from app import db
 from app.models.book import Book
 from flask import Blueprint, jsonify, make_response, request, abort
 
 books_bp = Blueprint("books", __name__, url_prefix="/books")
+      
+def validate_model(cls,model_id):
+    try:
+        model_id = int(model_id)
+    except:
+        abort(make_response({"message":f"{cls.__name__}{model_id} invalid"}, 400))
+    model = cls.query.get(model_id)
+    # for model in books:
+    #     if model.id == book_id:
+    #         return model
+    if not model:
+        abort(make_response({"message":f"model {model_id} not found"}, 404))
+    return model
 
 @books_bp.route("", methods=["GET"])
 def read_all_books():
-    if request.method == "GET":
+    
+    title_query = request.args.get("title")
+    if title_query:
+        books = Book.query.filter_by(title=title_query)
+    else:
         books = Book.query.all()
-        books_response = []
-        for book in books:
-            books_response.append({
-                "id": book.id,
-                "title": book.title,
-                "description": book.description
-            })
-        return jsonify(books_response)
+
+    books_response = []
+    for book in books:
+        books_response.append(book.to_dict())
+    return jsonify(books_response)
+
+@books_bp.route("/<book_id>", methods=["GET"])
+def read_one_book(book_id):
+    book = validate_model(book_id)
+    return book.to_dict()
 
 @books_bp.route("", methods=["POST"])
 def create_books():
@@ -28,8 +48,27 @@ def create_books():
     db.session.commit()
 
     return f"Book {new_book.title} successfully created", 201
-      
 
+@books_bp.route("/<book_id>", methods=["PUT"])
+def update_book(book_id):
+    book = validate_model(book_id)
+    request_body = request.get_json()
+
+    book.title = request_body["title"]
+    book.description = request_body["description"]
+
+    db.session.commit()
+
+    return make_response(f"Book #{book_id} succesfully updated")
+
+@books_bp.route("/<book_id>", methods=["DELETE"])
+def delete_book(book_id):
+    book = validate_model(book_id)
+
+    db.session.delete(book)
+    db.session.commit()
+
+    return make_response(f"Book #{book_id} succesfully Deleted")
 # hello_world_bp = Blueprint("hello_world", __name__)
 
 # @hello_world_bp.route("/hello-world", methods=["GET"])
@@ -71,29 +110,3 @@ def create_books():
 
 # INSERT INTO book
 # VALUES (1,'A Wrinkle in Time', 'Fantastical');
-
-
-
-
-
-
-# @books_bp.route("/<book_id>", methods=["GET"])
-# def handle_book(book_id):
-#     book = validate_book(book_id)
-
-#     return {
-#         "id": book.id,
-#         "title": book.title,
-#         "description": book.description,
-#     }
-# def validate_book(book_id):
-#     try:
-#         book_id = int(book_id)
-#     except:
-#         abort(make_response({"message":f"book {book_id} invalid"}, 400))
-
-#     for book in books:
-#         if book.id == book_id:
-#             return book
-
-#     abort(make_response({"message":f"book {book_id} not found"}, 404))
