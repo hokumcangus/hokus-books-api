@@ -1,6 +1,6 @@
 from app.models.book import Book
 from werkzeug.exceptions import HTTPException
-from app.routes import validate_book
+from app.routes import validate_model
 import pytest
 
 def test_to_dict_no_missing_data():
@@ -195,7 +195,7 @@ def test_delete_book_invalid_id(client, two_saved_books):
 
 def test_validate_book(two_saved_books):
     # Act
-    result_book = validate_book(1)
+    result_book = validate_model(Book,1)
 
     # Assert
     assert result_book.id == 1
@@ -207,12 +207,12 @@ def test_validate_book_missing_record(two_saved_books):
     # Calling `validate_book` without being invoked by a route will
     # cause an `HTTPException` when an `abort` statement is reached 
     with pytest.raises(HTTPException):
-        result_book = validate_book("3")
+        result_book = validate_model(Book, "3")
     
 def test_validate_book(two_saved_books):
     # Act
-    # Add `Book` argument to `validate_book` invocation
-    result_book = validate_book(Book, 1)
+    # Add `Book` argument to `validate_model` invocation
+    result_book = validate_model(Book, 1)
 
     # Assert
     assert result_book.id == 1
