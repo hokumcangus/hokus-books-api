@@ -1,7 +1,7 @@
 from app.models.book import Book
 import pytest
 import http
-from app.routes import validate_model
+from app.routes.book import validate_model
 
 @classmethod
 def from_dict(cls, book_data):
@@ -59,16 +59,17 @@ def test_from_dict_with_extra_keys():
     assert new_book.title == "New Book"
     assert new_book.description == "The Best!"
 
-def test_validate_model(two_saved_books):
-    # Act
-    result_book = validate_model(Book, 1)
+# def test_validate_model(two_saved_books):
+#     # Act
+#     result_book = validate_model(Book, 1)
 
-    # Assert
-    assert result_book.id == 1
-    assert result_book.title == "Ocean Book"
-    assert result_book.description == "watr 4evr"
+#     # Assert
+#     assert result_book.id == 1
+#     assert result_book.title == "Ocean Book"
+#     assert result_book.description == "watr 4evr"
 
-# def test_validate_model_missing_record(two_saved_books):
+# def test_validate_model_missing_record(two_saved_books):\q
+
 #     # Act & Assert
 #     # Calling `validate_model` without being invoked by a route will
 #     # cause an `HTTPException` when an `abort` statement is reached 

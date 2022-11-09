@@ -1,4 +1,4 @@
-import imp
+
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
@@ -16,9 +16,11 @@ def create_app(test_config=None):
 
     db.init_app(app)
     migrate.init_app(app, db)
+    from .routes import book
     from app.models.book import Book
+    from app.routes.book import validate_model
 
-    from .routes import books_bp
-    app.register_blueprint(books_bp)
+    from app.routes.book import bp
+    app.register_blueprint(bp)
 
     return app

@@ -12,3 +12,8 @@ class Book(db.Model):
         book_as_dict["description"] = self.description
 
         return book_as_dict
+
+    @classmethod
+    def from_dict(cls, task_data):
+        new_book = Book(title=task_data["title"], description=task_data["description"])
+        return new_book
