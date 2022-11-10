@@ -110,3 +110,17 @@ def delete_book(book_id):
 
 # INSERT INTO book
 # VALUES (1,'A Wrinkle in Time', 'Fantastical');
+
+
+# CREATE TABLE author (
+#   id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+#   name TEXT,
+#   books TEXT 
+# );
+# CREATE TABLE author (
+#   id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+#   title VARCHAR(32),
+#   description TEXT,
+#   author_id INT,
+#   FOREIGN KEY (author_id) REFERENCES book(id)
+# );
